@@ -1,15 +1,14 @@
 <p align="center">
-  <h1 align="center">ddp-rate-limiter-mixin</h1>
+  <h1 align="center">@allohouston/ddp-rate-limiter-mixin</h1>
 </p>
 
 <p align="center">
   <a href="https://github.com/allohouston/ddp-rate-limiter-mixin/actions/workflows/ci.yml"><img src="https://github.com/allohouston/ddp-rate-limiter-mixin/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
-  <a href="https://www.npmjs.com/package/ddp-rate-limiter-mixin"><img src="https://img.shields.io/npm/v/ddp-rate-limiter-mixin.svg" alt="npm version" /></a>
-  <a href="https://www.npmjs.com/package/ddp-rate-limiter-mixin"><img src="https://img.shields.io/npm/dm/ddp-rate-limiter-mixin.svg" alt="npm downloads" /></a>
+  <a href="https://github.com/allohouston/ddp-rate-limiter-mixin/pkgs/npm/ddp-rate-limiter-mixin"><img src="https://img.shields.io/github/v/release/allohouston/ddp-rate-limiter-mixin?label=github%20packages" alt="GitHub Packages version" /></a>
   <img src="https://img.shields.io/badge/coverage-100%25-brightgreen" alt="coverage 100%" />
   <img src="https://img.shields.io/badge/meteor-3.4%2B-blue" alt="Meteor 3.4+" />
   <img src="https://img.shields.io/badge/node-%3E%3D20-green" alt="Node >= 20" />
-  <a href="https://github.com/allohouston/ddp-rate-limiter-mixin/blob/master/LICENSE"><img src="https://img.shields.io/npm/l/ddp-rate-limiter-mixin.svg" alt="license" /></a>
+  <a href="https://github.com/allohouston/ddp-rate-limiter-mixin/blob/master/LICENSE"><img src="https://img.shields.io/github/license/allohouston/ddp-rate-limiter-mixin" alt="license" /></a>
 </p>
 
 <p align="center">
@@ -34,14 +33,14 @@ This mixin lets you declare rate limits **right where you define the method** â€
 
 ```bash
 meteor add ddp-rate-limiter
-npm install ddp-rate-limiter-mixin
+npm install @allohouston/ddp-rate-limiter-mixin --registry=https://npm.pkg.github.com
 ```
 
 ## Quick Start
 
 ```typescript
 import { ValidatedMethod } from "meteor/mdg:validated-method";
-import { RateLimiterMixin } from "ddp-rate-limiter-mixin";
+import { RateLimiterMixin } from "@allohouston/ddp-rate-limiter-mixin";
 
 const sendMessage = new ValidatedMethod({
     name: "chat.sendMessage",
@@ -177,14 +176,14 @@ After the mixin runs, `methodOptions.rateLimitRuleId` contains the rule ID retur
 Full type definitions included.
 
 ```typescript
-import { RateLimiterMixin } from "ddp-rate-limiter-mixin";
+import { RateLimiterMixin } from "@allohouston/ddp-rate-limiter-mixin";
 import type {
     MethodOptions,
     RateLimitConfig,
     RateLimitMatcher,
     RateLimitReply,
     RateLimitInput,
-} from "ddp-rate-limiter-mixin";
+} from "@allohouston/ddp-rate-limiter-mixin";
 ```
 
 ## Migration from v1
@@ -207,7 +206,7 @@ v2 is a **breaking change**:
 
 - [Meteor DDPRateLimiter docs](https://docs.meteor.com/api/DDPRateLimiter)
 - [mdg:validated-method](https://github.com/meteor/validated-method)
-- [npm package](https://www.npmjs.com/package/ddp-rate-limiter-mixin)
+- [GitHub Packages](https://github.com/allohouston/ddp-rate-limiter-mixin/pkgs/npm/ddp-rate-limiter-mixin)
 
 </details>
 
@@ -226,14 +225,14 @@ Ce mixin permet de declarer les limites **directement dans la definition de la m
 
 ```bash
 meteor add ddp-rate-limiter
-npm install ddp-rate-limiter-mixin
+npm install @allohouston/ddp-rate-limiter-mixin --registry=https://npm.pkg.github.com
 ```
 
 ## Demarrage rapide
 
 ```typescript
 import { ValidatedMethod } from "meteor/mdg:validated-method";
-import { RateLimiterMixin } from "ddp-rate-limiter-mixin";
+import { RateLimiterMixin } from "@allohouston/ddp-rate-limiter-mixin";
 
 const sendMessage = new ValidatedMethod({
     name: "chat.sendMessage",
@@ -369,14 +368,14 @@ Apres execution du mixin, `methodOptions.rateLimitRuleId` contient l'ID de la re
 Definitions de types completes incluses.
 
 ```typescript
-import { RateLimiterMixin } from "ddp-rate-limiter-mixin";
+import { RateLimiterMixin } from "@allohouston/ddp-rate-limiter-mixin";
 import type {
     MethodOptions,
     RateLimitConfig,
     RateLimitMatcher,
     RateLimitReply,
     RateLimitInput,
-} from "ddp-rate-limiter-mixin";
+} from "@allohouston/ddp-rate-limiter-mixin";
 ```
 
 ## Migration depuis v1
@@ -399,7 +398,7 @@ v2 est un **breaking change** :
 
 - [Documentation DDPRateLimiter Meteor](https://docs.meteor.com/api/DDPRateLimiter)
 - [mdg:validated-method](https://github.com/meteor/validated-method)
-- [Package npm](https://www.npmjs.com/package/ddp-rate-limiter-mixin)
+- [GitHub Packages](https://github.com/allohouston/ddp-rate-limiter-mixin/pkgs/npm/ddp-rate-limiter-mixin)
 
 </details>
 

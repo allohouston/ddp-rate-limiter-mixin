@@ -1,5 +1,5 @@
 {
-    "name": "ddp-rate-limiter-mixin",
+    "name": "@allohouston/ddp-rate-limiter-mixin",
     "version": "2.0.0",
     "description": "A mixin for mdg:validated-method to add rate limitation support to Meteor methods.",
     "repository": {
@@ -57,6 +57,9 @@
         "tsdown": "^0.16.5",
         "typescript": "^5.9.3",
         "vitest": "^4.0.9"
+    },
+    "publishConfig": {
+        "registry": "https://npm.pkg.github.com"
     },
     "keywords": [
         "meteor",
