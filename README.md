@@ -4,6 +4,7 @@
 
 <p align="center">
   <a href="https://github.com/allohouston/ddp-rate-limiter-mixin/actions/workflows/ci.yml"><img src="https://github.com/allohouston/ddp-rate-limiter-mixin/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
+  <a href="https://www.npmjs.com/package/@allohouston/ddp-rate-limiter-mixin"><img src="https://img.shields.io/npm/v/@allohouston/ddp-rate-limiter-mixin" alt="npm version" /></a>
   <a href="https://github.com/allohouston/ddp-rate-limiter-mixin/pkgs/npm/ddp-rate-limiter-mixin"><img src="https://img.shields.io/github/v/release/allohouston/ddp-rate-limiter-mixin?label=github%20packages" alt="GitHub Packages version" /></a>
   <img src="https://img.shields.io/badge/coverage-100%25-brightgreen" alt="coverage 100%" />
   <img src="https://img.shields.io/badge/meteor-3.4%2B-blue" alt="Meteor 3.4+" />
@@ -33,6 +34,11 @@ This mixin lets you declare rate limits **right where you define the method** â€
 
 ```bash
 meteor add ddp-rate-limiter
+
+# From npmjs.com
+npm install @allohouston/ddp-rate-limiter-mixin
+
+# Or from GitHub Packages (add to .npmrc: @allohouston:registry=https://npm.pkg.github.com)
 npm install @allohouston/ddp-rate-limiter-mixin --registry=https://npm.pkg.github.com
 ```
 
@@ -225,6 +231,11 @@ Ce mixin permet de declarer les limites **directement dans la definition de la m
 
 ```bash
 meteor add ddp-rate-limiter
+
+# Depuis npmjs.com
+npm install @allohouston/ddp-rate-limiter-mixin
+
+# Ou depuis GitHub Packages (ajouter dans .npmrc : @allohouston:registry=https://npm.pkg.github.com)
 npm install @allohouston/ddp-rate-limiter-mixin --registry=https://npm.pkg.github.com
 ```
 
