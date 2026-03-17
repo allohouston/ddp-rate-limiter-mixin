@@ -1,9 +1,25 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Coverage
+coverage/
+
+# OS
+.DS_Store
 *.swp
 *~
+
+# IDE
+.idea/
 *.iml
-.*.haste_cache.*
-.DS_Store
-.idea
+.vscode/
+
+# Logs
+*.log
 npm-debug.log
-node_modules
-dist
+
+# Meteor (example app)
+.meteor/local

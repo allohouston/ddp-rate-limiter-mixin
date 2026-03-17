@@ -1,0 +1,101 @@
+{
+    "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+    "vcs": {
+        "enabled": true,
+        "clientKind": "git",
+        "useIgnoreFile": true
+    },
+    "files": {
+        "ignoreUnknown": true,
+        "includes": ["**", "!**/node_modules", "!**/dist", "!**/coverage", "!**/*.min.js", "!**/package-lock.json", "!example", "!.claude"]
+    },
+    "formatter": {
+        "enabled": true,
+        "indentStyle": "space",
+        "indentWidth": 4,
+        "lineWidth": 140
+    },
+    "javascript": {
+        "formatter": {
+            "quoteStyle": "double",
+            "trailingCommas": "all",
+            "bracketSameLine": true,
+            "attributePosition": "multiline"
+        }
+    },
+    "json": {
+        "formatter": {
+            "indentWidth": 4
+        }
+    },
+    "linter": {
+        "enabled": true,
+        "rules": {
+            "recommended": true,
+
+            "style": {
+                "useConst": "error",
+                "useBlockStatements": "error",
+                "noNegationElse": "warn",
+                "noNestedTernary": "error",
+                "noParameterAssign": "error",
+                "noUselessElse": "error",
+                "useCollapsedElseIf": "error",
+                "useForOf": "error",
+                "useThrowOnlyError": "error",
+                "useThrowNewError": "error"
+            },
+
+            "complexity": {
+                "noExcessiveCognitiveComplexity": "error",
+                "noForEach": "warn",
+                "useSimplifiedLogicExpression": "warn"
+            },
+
+            "correctness": {
+                "noUnusedImports": "error",
+                "noUnusedVariables": "error"
+            },
+
+            "performance": {
+                "useTopLevelRegex": "warn"
+            },
+
+            "suspicious": {
+                "noEmptyBlockStatements": "error",
+                "noConsole": "warn",
+                "useErrorMessage": "error"
+            }
+        }
+    },
+    "assist": {
+        "enabled": true,
+        "actions": {
+            "source": {
+                "organizeImports": "on"
+            }
+        }
+    },
+    "overrides": [
+        {
+            "includes": ["**/*.test.*", "**/*.spec.*", "**/__tests__/**"],
+            "linter": {
+                "rules": {
+                    "suspicious": {
+                        "noConsole": "off"
+                    }
+                }
+            }
+        },
+        {
+            "includes": ["**/*.config.*", "commitlint.config.*"],
+            "linter": {
+                "rules": {
+                    "style": {
+                        "noDefaultExport": "off"
+                    }
+                }
+            }
+        }
+    ]
+}

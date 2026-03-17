@@ -1,140 +1,156 @@
 # ddp-rate-limiter-mixin
 
-A mixin for [mdg:validated-method](https://github.com/meteor/validated-method) to add rate limitation support to Meteor's methods.
+A mixin for [mdg:validated-method](https://github.com/meteor/validated-method) to add rate limitation support to Meteor methods.
+
+**Compatible with Meteor 3.4+** (Node 22, async/await, no Fibers).
 
 ## Install
 
 ```bash
 meteor add ddp-rate-limiter
-npm install --save ddp-rate-limiter-mixin
+npm install ddp-rate-limiter-mixin
 ```
 
 ## Usage
 
-```javascript
-import { ValidatedMethod } from 'meteor/mdg:validated-method';
-import { RateLimiterMixin } from 'ddp-rate-limiter-mixin';
+```typescript
+import { ValidatedMethod } from "meteor/mdg:validated-method";
+import { RateLimiterMixin } from "ddp-rate-limiter-mixin";
 
-// limit the maximum 5 requests in 5 seconds to this method for every clients
+// Limit to 5 requests per 5 seconds for all clients
 const foo = new ValidatedMethod({
-  name: 'foo',
-  mixins: [RateLimiterMixin],
-  rateLimit: {
-    numRequests: 5,
-    timeInterval: 5000,
-  },
-  validate: null,
-  run() {
-    // ...
-  }
+    name: "foo",
+    mixins: [RateLimiterMixin],
+    rateLimit: {
+        numRequests: 5,
+        timeInterval: 5000,
+    },
+    validate: null,
+    async run() {
+        // ...
+    },
 });
 
-// limit the maximum 5 requests in 5 seconds to this method for user1 only
+// Limit to 5 requests per 5 seconds for user1 only
 const boo = new ValidatedMethod({
-  name: 'boo',
-  mixins: [RateLimiterMixin],
-  rateLimit: {
-    matcher: {
-      userId: 'user1',
+    name: "boo",
+    mixins: [RateLimiterMixin],
+    rateLimit: {
+        matcher: {
+            userId: "user1",
+        },
+        numRequests: 5,
+        timeInterval: 5000,
     },
-    numRequests: 5,
-    timeInterval: 5000,
-  },
-  validate: null,
-  run() {
-    // ...
-  }
+    validate: null,
+    async run() {
+        // ...
+    },
 });
 
-// limit the maximum 5 requests in 5 seconds to this method for users who are not `Admin`
+// Limit to 5 requests per 5 seconds for non-admin users with a custom error message
 const bar = new ValidatedMethod({
-  name: 'bar',
-  mixins: [RateLimiterMixin],
-  rateLimit: {
-    // this use to match the request, optional
-    matcher: {
-      // optional, could be a string or a return-boolean function
-      userId(userId) {
-        return Meteor.users.findOne(userId).type !== 'Admin';
-      },
-      // optional, could be a string or a return-boolean function
-      connectionId(connectionId) {
-        return true;
-      },
-      // optional, could be a string or a return-boolean function
-      clientAddress(clientAddress) {
-        return true;
-      },
+    name: "bar",
+    mixins: [RateLimiterMixin],
+    rateLimit: {
+        matcher: {
+            userId(userId) {
+                // In Meteor 3, use findOneAsync in your app code
+                // Matcher functions passed to DDPRateLimiter accept sync functions
+                return userId !== "adminId";
+            },
+        },
+        numRequests: 5,
+        timeInterval: 5000,
+        errorMessage: (data) => `Too many requests. Try again in ${Math.ceil(data.timeToReset / 1000)}s.`,
     },
-    numRequests: 5,
-    timeInterval: 5000,
-  },
-  validate: null,
-  run() {
-    // ...
-  }
+    validate: null,
+    async run() {
+        // ...
+    },
 });
 ```
 
-## Rate Limit
+## API
 
-This package uses Meteor's [DDPRateLimiter](https://docs.meteor.com/api/methods.html#ddpratelimiter) behind the scene to support rate limitation for Meteor methods. This comes with a nicer way to define rate limitation.
+### `RateLimiterMixin(methodOptions)`
 
-Using normal [DDPRateLimiter](https://docs.meteor.com/api/methods.html#ddpratelimiter) way is fine, but it would introduce 'side-effect' to your system. Like sometimes you just do not know where the limitation is set, or what is the maximum requests could be called in a period of time. This package helps solving that by specifying limitation when defining a method.
+A mixin function for `ValidatedMethod`. It reads the `rateLimit` config from `methodOptions`, registers a rule via `DDPRateLimiter.addRule()`, and returns the options with an added `rateLimitRuleId` property.
 
-## rateLimit option
+On the client, it returns `methodOptions` unchanged (rate limiting is server-only).
 
-You have to specify the `rateLimit` option to define limitation.
+### `rateLimit` option
 
-`rateLimit.matcher` is optional. If specified it is similar to `matcher` 1st argument of [DDPRateLimiter.addRule](https://docs.meteor.com/api/methods.html#DDPRateLimiter-addRule), except `name` is always the name of method and `type` is always `method`.
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| `numRequests` | `number` | yes | Maximum requests allowed per `timeInterval` |
+| `timeInterval` | `number` | yes | Reset interval in milliseconds |
+| `matcher` | `object` | no | Filter which requests count towards the limit |
+| `callback` | `function` | no | Called after a rule is evaluated |
+| `errorMessage` | `string \| function` | no | Custom error message when rate limit is exceeded |
 
-```javascript
-rateLimit: {
-  // this use to match the request, optional
-  matcher: {
-    // optional, could be a string or a return-boolean function
-    userId(userId) {
-      // ...
-      return true/false;
-    },
-    // optional, could be a string or a return-boolean function
-    connectionId(connectionId) {
-      return true/false;
-    },
-    // optional, could be a string or a return-boolean function
-    clientAddress(clientAddress) {
-      return true/false;
-    },
-  },
-  // numRequests is the maximum number of  requests could be made in timeInterval (milliseconds)
-  numRequests: 5,
-  timeInterval: 5000, // 5000 milliseconds
-  // callback is a function to be called after a rule is executed.
-  callback: (check, ruleInput) => ()
-},
+### `matcher` properties
+
+All matcher properties are optional. Unspecified fields default to matching all requests.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `userId` | `string \| (userId: string) => boolean` | Match by user ID |
+| `connectionId` | `string \| (connectionId: string) => boolean` | Match by DDP connection |
+| `clientAddress` | `string \| (clientAddress: string) => boolean` | Match by IP address |
+
+> `name` is always set to the method name and `type` is always `"method"`.
+
+### `callback` parameters
+
+```typescript
+callback(reply, ruleInput)
 ```
 
-### rateLimit callback properties
+- `reply.allowed` — whether the call is allowed
+- `reply.timeToReset` — milliseconds until the rate limit resets
+- `reply.numInvocationsLeft` — remaining invocations in the current interval
+- `ruleInput.type` — `"method"` or `"subscription"`
+- `ruleInput.name` — the method name
+- `ruleInput.userId` — the user ID
+- `ruleInput.connectionId` — the DDP connection ID
+- `ruleInput.clientAddress` — the client IP address
 
-Overview:
+### `errorMessage`
 
+Custom error message shown when the rate limit is exceeded. Can be a static string or a function receiving `{ timeToReset }` that returns a string.
+
+Uses `DDPRateLimiter.setErrorMessageOnRule()` (Meteor 3+). On older Meteor versions where this API is unavailable, the option is silently ignored.
+
+### `rateLimitRuleId`
+
+After the mixin runs, `methodOptions.rateLimitRuleId` contains the rule ID returned by `DDPRateLimiter.addRule()`. This can be used with `DDPRateLimiter.removeRule()` or `DDPRateLimiter.setErrorMessageOnRule()` if needed.
+
+## TypeScript
+
+Full type definitions are included. Available types:
+
+```typescript
+import type { RateLimitConfig, RateLimitMatcher, MethodOptions, RateLimitReply, RateLimitInput } from "ddp-rate-limiter-mixin";
 ```
-check: {
-  allowed: boolean - indicates wether the call is allowed or not
-  timeToReset: integer - milliseconds to reset the number for the current interval
-  numInvocationsLeft: integer - number of invocations left for the current interval
-}
 
-ruleInput: {
-  'type': string - either 'method' or 'subscription'
-  'name': string - the name of the method or subscription being called
-  'userId': string - the user ID attempting the method or subscription
-  'connectionId': string - a string representing the user's DDP connection
-  'clientAddress': string - the IP address of the user
-}
-```
+## Migration from v1
 
-For more info check the following links:
+v2 is a **breaking change**:
 
-- [Meteor Docs - DDPRateLimiter-addRule](https://docs.meteor.com/api/methods.html#DDPRateLimiter-addRule)
-- [Meteor DDPRateLimiter-addRule callback PR](https://github.com/meteor/meteor/pull/8237)
+- **ESM by default** — uses `import`/`export` (CJS still available via `require()`)
+- **TypeScript** — source rewritten in TypeScript with full type definitions
+- **`rateLimitRuleId` exposed** — the mixin now returns a new options object with `rateLimitRuleId` instead of mutating the original
+- **`errorMessage` support** — new option to customize the rate limit error message
+- **No runtime dependencies** — `babel-runtime` removed
+- **Node >= 20** required
+- **Immutable** — the mixin no longer mutates `methodOptions`, it returns a new object
+
+## Links
+
+- [Meteor DDPRateLimiter docs](https://docs.meteor.com/api/DDPRateLimiter)
+- [mdg:validated-method](https://github.com/meteor/validated-method)
+
+## License
+
+MIT
