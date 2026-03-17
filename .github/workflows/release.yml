@@ -10,6 +10,7 @@ permissions:
     issues: write
     pull-requests: write
     packages: write
+    id-token: write
 
 jobs:
     release:
@@ -20,7 +21,7 @@ jobs:
               with:
                   fetch-depth: 0
 
-            # --- npmjs.com ---
+            # --- Build ---
             - uses: actions/setup-node@v4
               with:
                   node-version: "lts/*"
@@ -29,10 +30,12 @@ jobs:
                   scope: "@allohouston"
             - run: npm ci
             - run: npm run build
+
+            # --- npmjs.com (Trusted Publisher via OIDC) ---
             - run: npx semantic-release
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+                  NPM_CONFIG_PROVENANCE: true
 
             # --- GitHub Packages ---
             - uses: actions/setup-node@v4
