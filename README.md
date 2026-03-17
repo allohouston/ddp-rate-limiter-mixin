@@ -1,10 +1,5 @@
 <p align="center">
   <h1 align="center">ddp-rate-limiter-mixin</h1>
-  <p align="center">
-    Declarative rate limiting for Meteor methods — as a <a href="https://github.com/meteor/validated-method">ValidatedMethod</a> mixin.
-    <br />
-    <i>Rate limiting declaratif pour les methodes Meteor — en tant que mixin <a href="https://github.com/meteor/validated-method">ValidatedMethod</a>.</i>
-  </p>
 </p>
 
 <p align="center">
@@ -26,28 +21,23 @@
 
 ---
 
-## Why? / Pourquoi ?
+<details open>
+<summary><b>English</b></summary>
+
+## Why?
 
 Meteor's `DDPRateLimiter.addRule()` works, but it creates **side effects** scattered across your codebase. You never know where a limit is defined or what the threshold is.
 
 This mixin lets you declare rate limits **right where you define the method** — explicit, colocated, easy to audit.
 
-*Le `DDPRateLimiter.addRule()` de Meteor fonctionne, mais il cree des **effets de bord** disperses dans le code. On ne sait jamais ou une limite est definie ni quel est le seuil.*
-
-*Ce mixin permet de declarer les limites **directement dans la definition de la methode** — explicite, colocalise, facile a auditer.*
-
----
-
-## Install / Installation
+## Install
 
 ```bash
 meteor add ddp-rate-limiter
 npm install ddp-rate-limiter-mixin
 ```
 
----
-
-## Quick Start / Demarrage rapide
+## Quick Start
 
 ```typescript
 import { ValidatedMethod } from "meteor/mdg:validated-method";
@@ -69,13 +59,9 @@ const sendMessage = new ValidatedMethod({
 
 That's it. 5 requests per 5 seconds, for all clients, enforced server-side.
 
-*C'est tout. 5 requetes par 5 secondes, pour tous les clients, applique cote serveur.*
+## Examples
 
----
-
-## Examples / Exemples
-
-### Limit a specific user / Limiter un utilisateur specifique
+### Limit a specific user
 
 ```typescript
 const updateProfile = new ValidatedMethod({
@@ -90,7 +76,7 @@ const updateProfile = new ValidatedMethod({
 });
 ```
 
-### Limit with a custom matcher / Limiter avec un matcher personnalise
+### Custom matcher function
 
 ```typescript
 const deletePost = new ValidatedMethod({
@@ -110,7 +96,7 @@ const deletePost = new ValidatedMethod({
 });
 ```
 
-### Custom error message / Message d'erreur personnalise
+### Custom error message
 
 ```typescript
 const submitForm = new ValidatedMethod({
@@ -126,8 +112,6 @@ const submitForm = new ValidatedMethod({
 });
 ```
 
----
-
 ## API Reference
 
 ### `RateLimiterMixin(methodOptions) → methodOptions`
@@ -136,23 +120,19 @@ A mixin function for `ValidatedMethod`. Registers a `DDPRateLimiter.addRule()` o
 
 On the client, returns `methodOptions` unchanged.
 
-*Fonction mixin pour `ValidatedMethod`. Enregistre une regle `DDPRateLimiter.addRule()` cote serveur et retourne les options avec un `rateLimitRuleId` ajoute.*
-
-*Cote client, retourne `methodOptions` sans modification.*
-
 ### `rateLimit` options
 
-| Property | Type | Required | Description (EN) | Description (FR) |
-|----------|------|:--------:|------------------|------------------|
-| `numRequests` | `number` | **yes** | Max requests per interval (must be >= 1) | Requetes max par intervalle (doit etre >= 1) |
-| `timeInterval` | `number` | **yes** | Interval in ms (must be > 0) | Intervalle en ms (doit etre > 0) |
-| `matcher` | `object` | no | Filter which requests count | Filtre les requetes a comptabiliser |
-| `callback` | `function` | no | Called after rule evaluation | Appelee apres evaluation de la regle |
-| `errorMessage` | `string \| function` | no | Custom error when limit exceeded | Message d'erreur quand la limite est atteinte |
+| Property | Type | Required | Description |
+|----------|------|:--------:|-------------|
+| `numRequests` | `number` | **yes** | Max requests per interval (must be >= 1) |
+| `timeInterval` | `number` | **yes** | Interval in ms (must be > 0) |
+| `matcher` | `object` | no | Filter which requests count towards the limit |
+| `callback` | `function` | no | Called after rule evaluation |
+| `errorMessage` | `string \| function` | no | Custom error when limit is exceeded |
 
 ### `matcher` properties
 
-All optional. Unspecified fields match all requests. / *Tous optionnels. Les champs absents matchent toutes les requetes.*
+All optional. Unspecified fields match all requests.
 
 | Property | Type | Description |
 |----------|------|-------------|
@@ -184,21 +164,17 @@ All optional. Unspecified fields match all requests. / *Tous optionnels. Les cha
 
 ### `errorMessage`
 
-Custom error message when the rate limit is exceeded. Uses `DDPRateLimiter.setErrorMessageOnRule()` (Meteor 3+). Silently ignored on older Meteor versions.
+Custom error message when the rate limit is exceeded. Can be a static string or a function receiving `{ timeToReset }` that returns a string.
 
-*Message d'erreur personnalise quand la limite est depassee. Utilise `DDPRateLimiter.setErrorMessageOnRule()` (Meteor 3+). Silencieusement ignore sur les anciennes versions.*
+Uses `DDPRateLimiter.setErrorMessageOnRule()` (Meteor 3+). Silently ignored on older Meteor versions.
 
 ### `rateLimitRuleId`
 
-After the mixin runs, `methodOptions.rateLimitRuleId` contains the rule ID. Use it with `DDPRateLimiter.removeRule()` or `DDPRateLimiter.setErrorMessageOnRule()` if needed.
-
-*Apres execution du mixin, `methodOptions.rateLimitRuleId` contient l'ID de la regle. Utilisable avec `DDPRateLimiter.removeRule()` ou `DDPRateLimiter.setErrorMessageOnRule()`.*
-
----
+After the mixin runs, `methodOptions.rateLimitRuleId` contains the rule ID returned by `DDPRateLimiter.addRule()`. Use it with `DDPRateLimiter.removeRule()` or `DDPRateLimiter.setErrorMessageOnRule()` if needed.
 
 ## TypeScript
 
-Full type definitions included. / *Definitions de types completes incluses.*
+Full type definitions included.
 
 ```typescript
 import { RateLimiterMixin } from "ddp-rate-limiter-mixin";
@@ -211,11 +187,9 @@ import type {
 } from "ddp-rate-limiter-mixin";
 ```
 
----
+## Migration from v1
 
-## Migration from v1 / Migration depuis v1
-
-v2 is a **breaking change**: / *v2 est un **breaking change** :*
+v2 is a **breaking change**:
 
 | Change | v1 | v2 |
 |--------|----|----|
@@ -229,13 +203,207 @@ v2 is a **breaking change**: / *v2 est un **breaking change** :*
 | Node.js | Any | **>= 20** |
 | Meteor | 1.x - 2.x | **3.4+** |
 
----
-
-## Links / Liens
+## Links
 
 - [Meteor DDPRateLimiter docs](https://docs.meteor.com/api/DDPRateLimiter)
 - [mdg:validated-method](https://github.com/meteor/validated-method)
 - [npm package](https://www.npmjs.com/package/ddp-rate-limiter-mixin)
+
+</details>
+
+---
+
+<details>
+<summary><b>Fran&ccedil;ais</b></summary>
+
+## Pourquoi ?
+
+Le `DDPRateLimiter.addRule()` de Meteor fonctionne, mais il cree des **effets de bord** disperses dans le code. On ne sait jamais ou une limite est definie ni quel est le seuil.
+
+Ce mixin permet de declarer les limites **directement dans la definition de la methode** — explicite, colocalise, facile a auditer.
+
+## Installation
+
+```bash
+meteor add ddp-rate-limiter
+npm install ddp-rate-limiter-mixin
+```
+
+## Demarrage rapide
+
+```typescript
+import { ValidatedMethod } from "meteor/mdg:validated-method";
+import { RateLimiterMixin } from "ddp-rate-limiter-mixin";
+
+const sendMessage = new ValidatedMethod({
+    name: "chat.sendMessage",
+    mixins: [RateLimiterMixin],
+    rateLimit: {
+        numRequests: 5,
+        timeInterval: 5000, // 5 requetes par 5 secondes
+    },
+    validate: null,
+    async run({ text, channelId }) {
+        // votre logique
+    },
+});
+```
+
+C'est tout. 5 requetes par 5 secondes, pour tous les clients, applique cote serveur.
+
+## Exemples
+
+### Limiter un utilisateur specifique
+
+```typescript
+const updateProfile = new ValidatedMethod({
+    name: "users.updateProfile",
+    mixins: [RateLimiterMixin],
+    rateLimit: {
+        matcher: { userId: "specificUserId" },
+        numRequests: 3,
+        timeInterval: 10000,
+    },
+    // ...
+});
+```
+
+### Matcher personnalise
+
+```typescript
+const deletePost = new ValidatedMethod({
+    name: "posts.delete",
+    mixins: [RateLimiterMixin],
+    rateLimit: {
+        matcher: {
+            userId(userId) {
+                // Limiter uniquement les utilisateurs non-admin
+                return userId !== "adminId";
+            },
+        },
+        numRequests: 2,
+        timeInterval: 60000, // 2 suppressions par minute
+    },
+    // ...
+});
+```
+
+### Message d'erreur personnalise
+
+```typescript
+const submitForm = new ValidatedMethod({
+    name: "forms.submit",
+    mixins: [RateLimiterMixin],
+    rateLimit: {
+        numRequests: 3,
+        timeInterval: 60000,
+        errorMessage: (data) =>
+            `Trop de soumissions. Reessayez dans ${Math.ceil(data.timeToReset / 1000)}s.`,
+    },
+    // ...
+});
+```
+
+## Reference API
+
+### `RateLimiterMixin(methodOptions) → methodOptions`
+
+Fonction mixin pour `ValidatedMethod`. Enregistre une regle `DDPRateLimiter.addRule()` cote serveur et retourne les options avec un `rateLimitRuleId` ajoute.
+
+Cote client, retourne `methodOptions` sans modification.
+
+### Options `rateLimit`
+
+| Propriete | Type | Requis | Description |
+|-----------|------|:------:|-------------|
+| `numRequests` | `number` | **oui** | Requetes max par intervalle (doit etre >= 1) |
+| `timeInterval` | `number` | **oui** | Intervalle en ms (doit etre > 0) |
+| `matcher` | `object` | non | Filtre les requetes a comptabiliser |
+| `callback` | `function` | non | Appelee apres evaluation de la regle |
+| `errorMessage` | `string \| function` | non | Message d'erreur quand la limite est atteinte |
+
+### Proprietes du `matcher`
+
+Toutes optionnelles. Les champs absents matchent toutes les requetes.
+
+| Propriete | Type | Description |
+|-----------|------|-------------|
+| `userId` | `string \| (id: string) => boolean` | Filtrer par ID utilisateur |
+| `connectionId` | `string \| (id: string) => boolean` | Filtrer par connexion DDP |
+| `clientAddress` | `string \| (addr: string) => boolean` | Filtrer par adresse IP |
+
+> `name` est toujours le nom de la methode, `type` est toujours `"method"`.
+
+### `callback(reply, ruleInput)`
+
+```typescript
+// reply
+{
+    allowed: boolean;           // l'appel est-il autorise ?
+    timeToReset: number;        // ms avant reinitialisation de la limite
+    numInvocationsLeft: number; // appels restants dans l'intervalle
+}
+
+// ruleInput
+{
+    type: string;           // "method" ou "subscription"
+    name: string;           // nom de la methode
+    userId: string;         // ID utilisateur
+    connectionId: string;   // ID de connexion DDP
+    clientAddress: string;  // IP du client
+}
+```
+
+### `errorMessage`
+
+Message d'erreur personnalise quand la limite est depassee. Peut etre une chaine statique ou une fonction recevant `{ timeToReset }` et retournant une chaine.
+
+Utilise `DDPRateLimiter.setErrorMessageOnRule()` (Meteor 3+). Silencieusement ignore sur les anciennes versions de Meteor.
+
+### `rateLimitRuleId`
+
+Apres execution du mixin, `methodOptions.rateLimitRuleId` contient l'ID de la regle retourne par `DDPRateLimiter.addRule()`. Utilisable avec `DDPRateLimiter.removeRule()` ou `DDPRateLimiter.setErrorMessageOnRule()`.
+
+## TypeScript
+
+Definitions de types completes incluses.
+
+```typescript
+import { RateLimiterMixin } from "ddp-rate-limiter-mixin";
+import type {
+    MethodOptions,
+    RateLimitConfig,
+    RateLimitMatcher,
+    RateLimitReply,
+    RateLimitInput,
+} from "ddp-rate-limiter-mixin";
+```
+
+## Migration depuis v1
+
+v2 est un **breaking change** :
+
+| Changement | v1 | v2 |
+|------------|----|----|
+| Langage | JavaScript (Babel 6) | TypeScript (strict) |
+| Format module | CJS uniquement | ESM + CJS (dual) |
+| Deps runtime | `babel-runtime` | **0** |
+| Mutabilite | Mute `methodOptions` | Retourne un **nouvel objet** |
+| `rateLimitRuleId` | Non expose | Expose dans les options retournees |
+| `errorMessage` | Non supporte | Supporte (string ou function) |
+| Validation | Verification de type basique | Stricte (NaN, Infinity, null, arrays) |
+| Node.js | Tout | **>= 20** |
+| Meteor | 1.x - 2.x | **3.4+** |
+
+## Liens
+
+- [Documentation DDPRateLimiter Meteor](https://docs.meteor.com/api/DDPRateLimiter)
+- [mdg:validated-method](https://github.com/meteor/validated-method)
+- [Package npm](https://www.npmjs.com/package/ddp-rate-limiter-mixin)
+
+</details>
+
+---
 
 ## License
 
