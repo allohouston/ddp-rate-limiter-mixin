@@ -21,23 +21,28 @@ jobs:
               with:
                   fetch-depth: 0
 
-            # --- Build ---
             - uses: actions/setup-node@v4
               with:
                   node-version: "lts/*"
                   cache: npm
                   registry-url: "https://registry.npmjs.org"
                   scope: "@allohouston"
+
             - run: npm ci
             - run: npm run build
 
-            # --- npmjs.com (Trusted Publisher via OIDC) ---
+            # semantic-release: version bump, git tag, GitHub release (no npm publish)
             - run: npx semantic-release
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  NPM_CONFIG_PROVENANCE: true
 
-            # --- GitHub Packages ---
+            # npmjs.com via Trusted Publisher (OIDC)
+            - run: npm publish --provenance --access public
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+              continue-on-error: true
+
+            # GitHub Packages
             - uses: actions/setup-node@v4
               with:
                   node-version: "lts/*"
